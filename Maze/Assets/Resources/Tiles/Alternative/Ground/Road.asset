@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 23c5471c2d29d804a980c7260c63de86, type: 3}
-  m_Name: Grass
+  m_Name: Road
   m_EditorClassIdentifier: 
   m_DefaultSprite: {fileID: 1975016845, guid: 86214f0f65858494b85bc0733fb9ae35, type: 3}
   m_DefaultGameObject: {fileID: 0}

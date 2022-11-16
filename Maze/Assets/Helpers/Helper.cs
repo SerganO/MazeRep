@@ -25,6 +25,11 @@ public static class Helper
         yield return new WaitForSeconds(time);
         action();
     }
+
+    public static void Wait(MonoBehaviour monoBehaviour, float time, VoidFunc action)
+    {
+        monoBehaviour.StartCoroutine(Wait(time, action));
+    }
 }
 
 public static class StringHelper

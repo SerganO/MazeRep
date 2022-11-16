@@ -5,7 +5,7 @@ using UnityEngine;
 public class LevelHandler : MonoBehaviour, ISwipeHandler
 {
     private ScriptableLevel _level;
-
+    private MoveResultChecker moveResultChecker = new MoveResultChecker();
     public TilemapManager TilemapManager;
     public SwipeManager SwipeManager;
     public Unit Unit;
@@ -19,10 +19,15 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
     {
         LoadLevel(levelId);
 
+        MoveToStart();
+        Bind();
+    }
+
+    private void MoveToStart()
+    {
         var startTile = StartTile();
         MoveToPosition(startTile);
         currentPosition = startTile;
-        Bind();
     }
 
     // Update is called once per frame
@@ -98,10 +103,11 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         else
         {
             Unit.gameObject.transform.localScale = new Vector3(0.5f, 0.5f);
-            StartCoroutine(Helper.Wait(0.25f, () => { Unit.gameObject.transform.localScale = new Vector3(1, 1); }));
+
+            Helper.Wait(this, 0.25f, () => { Unit.gameObject.transform.localScale = new Vector3(1, 1); });
 
         }
-        CheckFinish();
+        CheckMove();
     }
     void MoveToPosition(Vector3Int position)
     {
@@ -119,15 +125,33 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         return false;
     }
 
-    void CheckFinish()
+    void CheckMove()
     {
-        var finish = _level.ObjectTiles.Find(tile => { return tile.Tile.Type == TileType.Finish; });
-        if (finish.Position.x == currentPosition.x && finish.Position.y == currentPosition.y)
-            Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.green;
-        else
-            Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+        var ground = _level.GroundTiles.Find(tile => { return tile.Position.x == currentPosition.x && tile.Position.y == currentPosition.y; });
+        var objectTile = _level.ObjectTiles.Find(tile => { return tile.Position.x == currentPosition.x && tile.Position.y == currentPosition.y; });
+        var unit = _level.UnitTiles.Find(tile => { return tile.Position.x == currentPosition.x && tile.Position.y == currentPosition.y; });
+
+        var result = moveResultChecker.CheckMove(ground?.Tile, objectTile?.Tile, unit?.Tile);
+
+        switch (result)
+        {
+            case MoveResult.None:
+                Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                break;
+            case MoveResult.Finish:
+                Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.green;
+                break;
+            case MoveResult.Death:
+                Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+                Helper.Wait(this, 0.25f, () => {
+                    MoveToStart();
+                    Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                });
+                break;
+        }
+           
     }
-        
+
 
 
     private void OnDestroy()

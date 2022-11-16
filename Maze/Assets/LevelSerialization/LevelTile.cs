@@ -13,13 +13,14 @@ public class LevelTile : RuleTile
 public enum TileType
 {
     // Ground
-   Grass = 0,
+   Road = 0,
    Some = 1,
 
    // Object
 
    Start = 500,
    Finish = 501,
+   Pit = 502,
 
    // Unit
    Snorlax = 1000,

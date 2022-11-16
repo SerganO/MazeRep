@@ -79,7 +79,7 @@ public class TilemapManager : MonoBehaviour {
         foreach (var savedTile in level.GroundTiles) {
             switch (savedTile.Tile.Type)
             {
-                case TileType.Grass:
+                case TileType.Road:
                 case TileType.Some:
                     SetTile(_groundMap, savedTile);
                     break;
@@ -93,6 +93,7 @@ public class TilemapManager : MonoBehaviour {
             {
                 case TileType.Start:
                 case TileType.Finish:
+                case TileType.Pit:
                     SetTile(_objectMap, savedTile);
                     break;
                 default:
@@ -136,7 +137,7 @@ public class TilemapManager : MonoBehaviour {
 
             switch (savedTile.Tile.Type)
             {
-                case TileType.Grass:
+                case TileType.Road:
                 case TileType.Some:
                     var tile = tileSupplier.GetObjectForID(savedTile.Tile.Type.ToString(),levelType, "Ground");
                     SetTile(_groundMap, savedTile.Position, tile);
@@ -152,6 +153,7 @@ public class TilemapManager : MonoBehaviour {
             {
                 case TileType.Start:
                 case TileType.Finish:
+                case TileType.Pit:
                     var tile = tileSupplier.GetObjectForID(savedTile.Tile.Type.ToString(), levelType, "Objects");
                     SetTile(_objectMap, savedTile.Position, tile);
                     break;
