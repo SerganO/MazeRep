@@ -6,6 +6,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
 {
     private ScriptableLevel _level;
     private MoveResultChecker moveResultChecker = new MoveResultChecker();
+    private LevelManager levelManager = new LevelManager();
     public TilemapManager TilemapManager;
     public SwipeManager SwipeManager;
     public Unit Unit;
@@ -13,11 +14,12 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
     Vector3Int currentPosition;
 
     public string levelId;
+    public string levelPack = "Base";
     public string levelType = "Base";
     // Start is called before the first frame update
     void Start()
     {
-        LoadLevel(levelId);
+        LoadLevel(levelId, levelPack, levelType);
 
         MoveToStart();
         Bind();
@@ -52,9 +54,9 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         SwipeManager.LeftSwipe -= LeftSwipe;
     }
 
-    public void LoadLevel(string levelId)
+    public void LoadLevel(string levelId, string levelPack, string levelType)
     {
-        TilemapManager.LoadMap(levelId, levelType);
+        TilemapManager.LoadMap(levelId, levelPack, levelType);
         _level = TilemapManager.LastLoadedLevel;
     }
 
@@ -140,6 +142,17 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
                 break;
             case MoveResult.Finish:
                 Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.green;
+                Helper.Wait(this, 0.25f, () => {
+                    if (!levelManager.IsLastLevelInPack(levelId, levelPack))
+                    {
+                        var newLevelId = levelManager.NextLevelId(levelId, levelPack);
+                        LoadLevel(newLevelId, levelPack, levelType);
+                        levelId = newLevelId;
+                        MoveToStart();
+                        Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                    }
+                   
+                });
                 break;
             case MoveResult.Death:
                 Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
