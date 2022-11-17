@@ -910,8 +910,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TilemapManager: {fileID: 1548511128}
-  SwipeManager: {fileID: 1373907465}
-  ClickManager: {fileID: 1373907466}
+  GestureManager: {fileID: 1373907465}
   UnitWorldObject: {fileID: 2081875929}
   Unit: {fileID: 1502042993}
   levelId: 1

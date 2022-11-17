@@ -8,8 +8,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
     private MoveResultChecker moveResultChecker = new MoveResultChecker();
     private LevelManager levelManager = new LevelManager();
     public TilemapManager TilemapManager;
-    public SwipeManager SwipeManager;
-    public ClickManager ClickManager;
+    public GestureManager GestureManager;
     public GameObject UnitWorldObject;
     public Unit Unit;
 
@@ -43,27 +42,27 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
 
     void Bind()
     {
-        SwipeManager.UpSwipe += UpSwipe;
-        SwipeManager.DownSwipe += DownSwipe;
-        SwipeManager.RightSwipe += RightSwipe;
-        SwipeManager.LeftSwipe += LeftSwipe;
+        GestureManager.UpSwipe += UpSwipe;
+        GestureManager.DownSwipe += DownSwipe;
+        GestureManager.RightSwipe += RightSwipe;
+        GestureManager.LeftSwipe += LeftSwipe;
 
-        ClickManager.DoubleClick += ClickManager_DoubleClick;
+        GestureManager.DoubleClick += GestureManager_DoubleClick;
     }
 
-    private void ClickManager_DoubleClick()
+    private void GestureManager_DoubleClick()
     {
         TilemapManager.ToggleMark(currentPosition, levelType);
     }
 
     void Unbind()
     {
-        SwipeManager.UpSwipe -= UpSwipe;
-        SwipeManager.DownSwipe -= DownSwipe;
-        SwipeManager.RightSwipe -= RightSwipe;
-        SwipeManager.LeftSwipe -= LeftSwipe;
+        GestureManager.UpSwipe -= UpSwipe;
+        GestureManager.DownSwipe -= DownSwipe;
+        GestureManager.RightSwipe -= RightSwipe;
+        GestureManager.LeftSwipe -= LeftSwipe;
 
-        ClickManager.DoubleClick -= ClickManager_DoubleClick;
+        GestureManager.DoubleClick -= GestureManager_DoubleClick;
     }
 
     public void LoadLevel(string levelId, string levelPack, string levelType)
@@ -177,10 +176,12 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
                 Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
                 break;
             case MoveResult.Finish:
+                Unbind();
                 Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.green;
                 Unit.Win();
                 break;
             case MoveResult.Death:
+                Unbind();
                 Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
                 Unit.Death();
                 break;
@@ -190,16 +191,20 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
 
     IEnumerator Move(GameObject gameObject, Vector3 position)
     {
-        while (gameObject.transform.position != position)
+        SwipeStarted();
+        while (Mathf.Abs(gameObject.transform.position.sqrMagnitude - position.sqrMagnitude) > 0.25f)
         {
-            gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, position, 0.25f);
+            gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, position, 0.5f);
             yield return new WaitForEndOfFrame();
         }
+        gameObject.transform.position = position;
+        SwipeFinished();
     }
 
     public void AfterUnitDeathFunction()
     {
         MoveToStart();
+        Bind();
         Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
         Unit.Idle();
     }
@@ -212,18 +217,19 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
             LoadLevel(newLevelId, levelPack, levelType);
             levelId = newLevelId;
             MoveToStart();
+            Bind();
             Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
         }
     }
 
     public void SwipeStarted()
     {
-        SwipeManager.SetSwipeInProgress(true);
+        GestureManager.SetSwipeInProgress(true);
     }
 
     public void SwipeFinished()
     {
-        SwipeManager.SetSwipeInProgress(false);
+        GestureManager.SetSwipeInProgress(false);
     }
 
     private void OnDestroy()

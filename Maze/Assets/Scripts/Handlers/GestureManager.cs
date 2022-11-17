@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwipeManager : MonoBehaviour
+public class GestureManager : MonoBehaviour
 {
     Vector2 firstPressPos;
     Vector2 secondPressPos;
@@ -15,29 +15,24 @@ public class SwipeManager : MonoBehaviour
 
     float swipeLenght = 0.5f;
 
+    float clicked = 0;
+    float clicktime = 0;
+    float clickdelay = 0.35f;
+
+    public event VoidFunc DoubleClick;
+
     public bool swipeInProgress = false;
     private void Update()
     {
+        if (swipeInProgress) return;
         Swipe();
+        if (IsDoubleClick())
+        {
+            DoubleClick?.Invoke();
+        }
     }
     public void Swipe()
     {
-        if (swipeInProgress) return;
-        /*
-       if (Input.touches.Length > 0)
-        {
-            Touch t = Input.GetTouch(0);
-            if (t.phase == TouchPhase.Began)
-            {
-                //save began touch 2d point
-                firstPressPos = new Vector2(t.position.x, t.position.y);
-            }
-            if (t.phase == TouchPhase.Ended)
-            {
-                //save ended touch 2d point
-                secondPressPos = new Vector2(t.position.x, t.position.y);
-      
-      */
         if (Input.GetMouseButtonDown(0))
         {
             //save began touch 2d point
@@ -83,6 +78,23 @@ public class SwipeManager : MonoBehaviour
                 return;
             }
         }
+    }
+
+    bool IsDoubleClick()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            clicked++;
+            if (clicked == 1) clicktime = Time.time;
+        }
+        if (clicked > 1 && Time.time - clicktime < clickdelay)
+        {
+            clicked = 0;
+            clicktime = 0;
+            return true;
+        }
+        else if (clicked > 2 || Time.time - clicktime > 1) clicked = 0;
+        return false;
     }
 
     public void SetSwipeInProgress(bool value)
