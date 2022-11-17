@@ -9,6 +9,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
     private LevelManager levelManager = new LevelManager();
     public TilemapManager TilemapManager;
     public SwipeManager SwipeManager;
+    public GameObject UnitWorldObject;
     public Unit Unit;
 
     Vector3Int currentPosition;
@@ -19,6 +20,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
     // Start is called before the first frame update
     void Start()
     {
+        Unit.levelHandler = this;
         LoadLevel(levelId, levelPack, levelType);
 
         MoveToStart();
@@ -28,7 +30,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
     private void MoveToStart()
     {
         var startTile = StartTile();
-        MoveToPosition(startTile);
+        InstantlyMoveToPosition(startTile);
         currentPosition = startTile;
     }
 
@@ -75,53 +77,77 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
     {
         var newTilePosition = currentPosition;
         newTilePosition.y++;
-        HandleSwipe(newTilePosition);
+        HandleSwipe(newTilePosition, SwipeDirection.Up);
     }
 
     public void DownSwipe()
     {
         var newTilePosition = currentPosition;
         newTilePosition.y--;
-        HandleSwipe(newTilePosition);
+        HandleSwipe(newTilePosition, SwipeDirection.Down);
     }
 
     public void LeftSwipe()
     {
         var newTilePosition = currentPosition;
         newTilePosition.x--;
-        HandleSwipe(newTilePosition);
+        HandleSwipe(newTilePosition, SwipeDirection.Left);
     }
 
     public void RightSwipe()
     {
         var newTilePosition = currentPosition;
         newTilePosition.x++;
-        HandleSwipe(newTilePosition);
+        HandleSwipe(newTilePosition, SwipeDirection.Right);
     }
 
-    void HandleSwipe(Vector3Int position)
+    void HandleSwipe(Vector3Int position, SwipeDirection direction)
     {
-        if (MoveToPositionIfCan(position)) currentPosition = position;
+        if (MoveToPositionIfCan(position))
+        {
+            switch (direction)
+            {
+                case SwipeDirection.Up:
+                    Unit.UpSwipe();
+                    break;
+                case SwipeDirection.Down:
+                    Unit.DownSwipe();
+                    break;
+                case SwipeDirection.Right:
+                    Unit.RightSwipe();
+                    break;
+                case SwipeDirection.Left:
+                    Unit.LeftSwipe();
+                    break;
+            }
+
+            currentPosition = position;
+
+        }
         else
         {
-            Unit.gameObject.transform.localScale = new Vector3(0.5f, 0.5f);
-
-            Helper.Wait(this, 0.25f, () => { Unit.gameObject.transform.localScale = new Vector3(1, 1); });
+            Unit.WrongSwipe();
 
         }
         CheckMove();
     }
-    void MoveToPosition(Vector3Int position)
+
+    void InstantlyMoveToPosition(Vector3Int position)
     {
         Camera.main.transform.position = new Vector3(position.x + 0.5f, position.y + 0.5f, Camera.main.transform.position.z);
-        Unit.transform.position = new Vector3(position.x + 0.5f, position.y + 0.5f, 0);
+        UnitWorldObject.transform.position = new Vector3(position.x + 0.5f, position.y + 0.5f, 0);
+    }
+
+    void MoveToPosition(Vector3Int position)
+    {
+        StartCoroutine(Move(UnitWorldObject, new Vector3(position.x + 0.5f, position.y + 0.5f, 0)));
+        StartCoroutine(Move(Camera.main.gameObject, new Vector3(position.x + 0.5f, position.y + 0.5f, Camera.main.transform.position.z)));
     }
 
     bool MoveToPositionIfCan(Vector3Int position)
     {
         if(_level.GroundTiles.Find(tile => { return tile.Position.x == position.x && tile.Position.y == position.y; }) != null) {
-            Camera.main.transform.position = new Vector3(position.x + 0.5f, position.y + 0.5f, Camera.main.transform.position.z);
-            Unit.transform.position = new Vector3(position.x + 0.5f, position.y + 0.5f, 0);
+            MoveToPosition(position);
             return true;
         }
         return false;
@@ -142,30 +168,43 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
                 break;
             case MoveResult.Finish:
                 Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.green;
-                Helper.Wait(this, 0.25f, () => {
-                    if (!levelManager.IsLastLevelInPack(levelId, levelPack))
-                    {
-                        var newLevelId = levelManager.NextLevelId(levelId, levelPack);
-                        LoadLevel(newLevelId, levelPack, levelType);
-                        levelId = newLevelId;
-                        MoveToStart();
-                        Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
-                    }
-                   
-                });
+                Unit.Win();
                 break;
             case MoveResult.Death:
                 Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
-                Helper.Wait(this, 0.25f, () => {
-                    MoveToStart();
-                    Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
-                });
+                Unit.Death();
                 break;
         }
            
     }
 
+    IEnumerator Move(GameObject gameObject, Vector3 position)
+    {
+        while (gameObject.transform.position != position)
+        {
+            gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, position, 0.25f);
+            yield return new WaitForEndOfFrame();
+        }
+    }
 
+    public void AfterUnitDeathFunction()
+    {
+        MoveToStart();
+        Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+        Unit.Idle();
+    }
+
+    public void AfterWinFunction()
+    {
+        if (!levelManager.IsLastLevelInPack(levelId, levelPack))
+        {
+            var newLevelId = levelManager.NextLevelId(levelId, levelPack);
+            LoadLevel(newLevelId, levelPack, levelType);
+            levelId = newLevelId;
+            MoveToStart();
+            Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+    }
 
     private void OnDestroy()
     {

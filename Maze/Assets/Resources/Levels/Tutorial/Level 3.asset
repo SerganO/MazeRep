@@ -75,6 +75,6 @@ MonoBehaviour:
     Tile: {fileID: 11400000, guid: f86fde50c4aeeb74fa8ca1150ef94c42, type: 2}
   - Position: {x: 2, y: -2, z: 0}
     Tile: {fileID: 11400000, guid: 0732e1b94fb4dd347aa5984bca680bdf, type: 2}
-  - Position: {x: 8, y: -2, z: 0}
+  - Position: {x: 5, y: -2, z: 0}
     Tile: {fileID: 11400000, guid: 135aaf1ca0028934e9c44dc1c9850748, type: 2}
   UnitTiles: []

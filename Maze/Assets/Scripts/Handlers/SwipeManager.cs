@@ -77,3 +77,7 @@ public class SwipeManager : MonoBehaviour
         }
     }
 }
+
+public enum SwipeDirection {
+    Up, Down, Right, Left
+}
