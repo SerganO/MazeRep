@@ -39,7 +39,9 @@ public class TilemapManager : MonoBehaviour {
         newLevel.ObjectTiles = GetTilesFromMap(_objectMap).ToList();
         newLevel.UnitTiles = GetTilesFromMap(_unitMap).ToList();
 
+        #if UNITY_EDITOR
         ScriptableObjectUtility.SaveLevelFile(newLevel);
+        #endif
 
         IEnumerable<SavedTile> GetTilesFromMap(Tilemap map)
         {
@@ -69,7 +71,9 @@ public class TilemapManager : MonoBehaviour {
         newLevel.ObjectTiles = GetTilesFromMap(_objectMap).ToList();
         newLevel.UnitTiles = GetTilesFromMap(_unitMap).ToList();
 
+        #if UNITY_EDITOR
         ScriptableObjectUtility.SaveLevelFile(newLevel, levelPack);
+        #endif
 
         IEnumerable<SavedTile> GetTilesFromMap(Tilemap map)
         {

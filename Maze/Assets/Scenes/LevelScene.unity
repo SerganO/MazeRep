@@ -916,7 +916,7 @@ MonoBehaviour:
   Unit: {fileID: 1502042993}
   levelId: 1
   levelPack: Tutorial
-  levelType: Alternative
+  levelType: Base
 --- !u!4 &1373907464
 Transform:
   m_ObjectHideFlags: 0
