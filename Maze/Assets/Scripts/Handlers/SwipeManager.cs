@@ -13,12 +13,16 @@ public class SwipeManager : MonoBehaviour
     public event VoidFunc RightSwipe;
     public event VoidFunc LeftSwipe;
 
+    float swipeLenght = 0.5f;
+
+    public bool swipeInProgress = false;
     private void Update()
     {
         Swipe();
     }
     public void Swipe()
     {
+        if (swipeInProgress) return;
         /*
        if (Input.touches.Length > 0)
         {
@@ -51,30 +55,39 @@ public class SwipeManager : MonoBehaviour
             currentSwipe.Normalize();
 
             //swipe upwards
-            if (currentSwipe.y > 0 && currentSwipe.x > -0.5f && currentSwipe.x < 0.5f)
+            if (currentSwipe.y > 0 && currentSwipe.x > -swipeLenght && currentSwipe.x < swipeLenght)
             {
                 Debug.Log("up swipe");
                 UpSwipe?.Invoke();
+                return;
             }
             //swipe down
-            if (currentSwipe.y < 0 && currentSwipe.x > -0.5f && currentSwipe.x < 0.5f)
+            if (currentSwipe.y < 0 && currentSwipe.x > -swipeLenght && currentSwipe.x < swipeLenght)
             {
                 Debug.Log("down swipe");
                 DownSwipe?.Invoke();
+                return;
             }
             //swipe left
-            if (currentSwipe.x < 0 && currentSwipe.y > -0.5f && currentSwipe.y < 0.5f)
+            if (currentSwipe.x < 0 && currentSwipe.y > -swipeLenght && currentSwipe.y < swipeLenght)
             {
                 Debug.Log("left swipe");
                 LeftSwipe?.Invoke();
+                return;
             }
             //swipe right
-            if (currentSwipe.x > 0 && currentSwipe.y > -0.5f && currentSwipe.y < 0.5f)
+            if (currentSwipe.x > 0 && currentSwipe.y > -swipeLenght && currentSwipe.y < swipeLenght)
             {
                 Debug.Log("right swipe");
                 RightSwipe?.Invoke();
+                return;
             }
         }
+    }
+
+    public void SetSwipeInProgress(bool value)
+    {
+        swipeInProgress = value;
     }
 }
 

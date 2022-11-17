@@ -70,4 +70,14 @@ public class Unit : MonoBehaviour, ISwipeHandler
         levelHandler.AfterWinFunction();
     }
 
+    public void SwipeStarted()
+    {
+        levelHandler.SwipeStarted();
+    }
+
+    public void SwipeFinished()
+    {
+        levelHandler.SwipeFinished();
+    }
+
 }

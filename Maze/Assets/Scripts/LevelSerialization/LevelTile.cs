@@ -21,6 +21,7 @@ public enum TileType
    Start = 500,
    Finish = 501,
    Pit = 502,
+   Mark = 503,
 
    // Unit
    Snorlax = 1000,

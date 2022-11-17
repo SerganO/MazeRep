@@ -165,6 +165,26 @@ public class TilemapManager : MonoBehaviour {
         _lastLoadedLevel = level;
     }
 
+    public void ToggleMark(Vector3Int position, string levelType = "")
+    {
+        var tile = _lastLoadedLevel.UnitTiles.Find(tile => tile.Position.x == position.x && tile.Position.y == position.y);
+        if (tile == null)
+        {
+            var type = levelType == "" ? "Base" : levelType;
+            var mark = tileSupplier.GetObjectForID("Mark", type, "Objects");
+
+            _unitMap.SetTile(position, mark);
+            _lastLoadedLevel.UnitTiles.Add(new SavedTile()
+            {
+                Position = position,
+                Tile = mark
+            });
+        } else
+        {
+            _lastLoadedLevel.UnitTiles.Remove(tile);
+            _unitMap.SetTile(position, null);
+        }
+    }
 
 }
 

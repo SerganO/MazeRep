@@ -9,6 +9,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
     private LevelManager levelManager = new LevelManager();
     public TilemapManager TilemapManager;
     public SwipeManager SwipeManager;
+    public ClickManager ClickManager;
     public GameObject UnitWorldObject;
     public Unit Unit;
 
@@ -46,6 +47,13 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         SwipeManager.DownSwipe += DownSwipe;
         SwipeManager.RightSwipe += RightSwipe;
         SwipeManager.LeftSwipe += LeftSwipe;
+
+        ClickManager.DoubleClick += ClickManager_DoubleClick;
+    }
+
+    private void ClickManager_DoubleClick()
+    {
+        TilemapManager.ToggleMark(currentPosition, levelType);
     }
 
     void Unbind()
@@ -54,6 +62,8 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         SwipeManager.DownSwipe -= DownSwipe;
         SwipeManager.RightSwipe -= RightSwipe;
         SwipeManager.LeftSwipe -= LeftSwipe;
+
+        ClickManager.DoubleClick -= ClickManager_DoubleClick;
     }
 
     public void LoadLevel(string levelId, string levelPack, string levelType)
@@ -204,6 +214,16 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
             MoveToStart();
             Unit.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
         }
+    }
+
+    public void SwipeStarted()
+    {
+        SwipeManager.SetSwipeInProgress(true);
+    }
+
+    public void SwipeFinished()
+    {
+        SwipeManager.SetSwipeInProgress(false);
     }
 
     private void OnDestroy()

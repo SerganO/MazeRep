@@ -889,6 +889,7 @@ GameObject:
   - component: {fileID: 1373907464}
   - component: {fileID: 1373907463}
   - component: {fileID: 1373907465}
+  - component: {fileID: 1373907466}
   m_Layer: 0
   m_Name: LevelHandler
   m_TagString: Untagged
@@ -910,6 +911,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TilemapManager: {fileID: 1548511128}
   SwipeManager: {fileID: 1373907465}
+  ClickManager: {fileID: 1373907466}
   UnitWorldObject: {fileID: 2081875929}
   Unit: {fileID: 1502042993}
   levelId: 1
@@ -940,6 +942,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a04f671aba3d964898d24e37cae8dae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  swipeInProgress: 0
+--- !u!114 &1373907466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1373907462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0261e4238c437794ba6fab3b22b73e16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1502042990
