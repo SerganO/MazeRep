@@ -17,6 +17,8 @@ public class TilemapManager : MonoBehaviour {
     private ResourcesSupplier<ScriptableLevel> levelSupplier = new ResourcesSupplier<ScriptableLevel>("Levels");
 
     private ResourcesSupplier<LevelTile> tileSupplier = new ResourcesSupplier<LevelTile>("Tiles");
+
+    public EnemyManager enemyManager;
     public ScriptableLevel LastLoadedLevel
     {
         get
@@ -156,11 +158,13 @@ public class TilemapManager : MonoBehaviour {
                     var tile = levelType == "" ? savedTile.Tile : tileSupplier.GetObjectForID(savedTile.Tile.Type.ToString(), levelType, "Unit");
                     SetTile(_unitMap, savedTile.Position, tile);
                     break;
+                case TileType.Mark:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
-
+       
         void SetTile(Tilemap map, Vector3Int position, LevelTile tile)
         {
             map.SetTile(position, tile);
@@ -209,6 +213,26 @@ public static class ScriptableObjectUtility {
             Directory.CreateDirectory($"Assets/Resources/Levels/{packName}");
         }
         AssetDatabase.CreateAsset(level, $"Assets/Resources/Levels/{packName}/{level.name}.asset");
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+    }
+
+    public static void SaveEnemyFile(EnemyScriptableObject enemy)
+    {
+        AssetDatabase.CreateAsset(enemy, $"Assets/Resources/Enemies/_{enemy.name}.asset");
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+    }
+
+    public static void SaveEnemyFile(EnemyScriptableObject enemy, string packName)
+    {
+        if (!Directory.Exists($"Assets/Resources/Enemies/{packName}"))
+        {
+            Directory.CreateDirectory($"Assets/Resources/Enemies/{packName}");
+        }
+        AssetDatabase.CreateAsset(enemy, $"Assets/Resources/Enemies/{packName}/{enemy.name}.asset");
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Unit : MonoBehaviour, ISwipeHandler
+public class Unit : MonoBehaviour
 {
     [HideInInspector]
     public LevelHandler levelHandler;

@@ -16,4 +16,17 @@ public class MakeScriptableObject
 
         Selection.activeObject = asset;
     }
+
+    [MenuItem("Assets/Create/Enemy")]
+    public static void CreateEnemyScriptableObject()
+    {
+        EnemyScriptableObject asset = ScriptableObject.CreateInstance<EnemyScriptableObject>();
+
+        AssetDatabase.CreateAsset(asset, $"Assets/Resources/Enemies/NewEnemy {System.DateTime.Now.ToString().Replace(':', '_')}.asset");
+        AssetDatabase.SaveAssets();
+
+        EditorUtility.FocusProjectWindow();
+
+        Selection.activeObject = asset;
+    }
 }

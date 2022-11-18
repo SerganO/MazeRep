@@ -52,28 +52,28 @@ public class GestureManager : MonoBehaviour
             //swipe upwards
             if (currentSwipe.y > 0 && currentSwipe.x > -swipeLenght && currentSwipe.x < swipeLenght)
             {
-                Debug.Log("up swipe");
+                //Debug.Log("up swipe");
                 UpSwipe?.Invoke();
                 return;
             }
             //swipe down
             if (currentSwipe.y < 0 && currentSwipe.x > -swipeLenght && currentSwipe.x < swipeLenght)
             {
-                Debug.Log("down swipe");
+                //Debug.Log("down swipe");
                 DownSwipe?.Invoke();
                 return;
             }
             //swipe left
             if (currentSwipe.x < 0 && currentSwipe.y > -swipeLenght && currentSwipe.y < swipeLenght)
             {
-                Debug.Log("left swipe");
+                //Debug.Log("left swipe");
                 LeftSwipe?.Invoke();
                 return;
             }
             //swipe right
             if (currentSwipe.x > 0 && currentSwipe.y > -swipeLenght && currentSwipe.y < swipeLenght)
             {
-                Debug.Log("right swipe");
+                //Debug.Log("right swipe");
                 RightSwipe?.Invoke();
                 return;
             }
@@ -104,5 +104,5 @@ public class GestureManager : MonoBehaviour
 }
 
 public enum SwipeDirection {
-    Up, Down, Right, Left
+    Down, Up, Right, Left, None
 }
