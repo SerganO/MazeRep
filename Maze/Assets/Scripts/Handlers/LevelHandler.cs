@@ -157,38 +157,46 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
     {
         if (turnInProgress) return;
         turnInProgress = true;
-        if (MoveToPositionIfCan(position))
+
+        var result = MoveToPositionIfCan(position, direction);
+
+        if(result != null)
         {
-            switch (direction)
+            if (result == true)
             {
-                case SwipeDirection.Up:
-                    Hero.UpSwipe();
-                    break;
-                case SwipeDirection.Down:
-                    Hero.DownSwipe();
-                    break;
-                case SwipeDirection.Right:
-                    Hero.RightSwipe();
-                    break;
-                case SwipeDirection.Left:
-                    Hero.LeftSwipe();
-                    break;
-            }
+                switch (direction)
+                {
+                    case SwipeDirection.Up:
+                        Hero.UpSwipe();
+                        break;
+                    case SwipeDirection.Down:
+                        Hero.DownSwipe();
+                        break;
+                    case SwipeDirection.Right:
+                        Hero.RightSwipe();
+                        break;
+                    case SwipeDirection.Left:
+                        Hero.LeftSwipe();
+                        break;
+                }
 
-            currentPosition = position;
-            foreach (var enemy in Enemies)
+                currentPosition = position;
+                foreach (var enemy in Enemies)
+                {
+                    enemy.Move();
+
+                }
+
+            }
+            else
             {
-                enemy.Move();
+                Hero.WrongSwipe();
 
             }
-
+            CheckMove();
         }
-        else
-        {
-            Hero.WrongSwipe();
 
-        }
-        CheckMove();
+       
         turnInProgress = false;
        
     }
@@ -215,11 +223,44 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         StartCoroutine(Move(transform.gameObject, new Vector3(position.x , position.y, 0)));
     }
 
-    bool MoveToPositionIfCan(Vector3Int position)
+    bool? MoveToPositionIfCan(Vector3Int position, SwipeDirection direction)
     {
         if(_level.GroundTiles.Find(tile => { return tile.Position.x == position.x && tile.Position.y == position.y; }) != null) {
-            MoveToPosition(position);
-            return true;
+            var enemies = Enemies.FindAll(enemy => enemy.Position.x == position.x && enemy.Position.y == position.y);
+
+            var enemy = enemies.Find(enemy =>
+            {
+                switch (direction)
+                {
+                    case SwipeDirection.Down:
+                        return enemy.NextStepDirection() == SwipeDirection.Up;
+                    case SwipeDirection.Up:
+                        return enemy.NextStepDirection() == SwipeDirection.Down;
+                    case SwipeDirection.Right:
+                        return enemy.NextStepDirection() == SwipeDirection.Left;
+                    case SwipeDirection.Left:
+                        return enemy.NextStepDirection() == SwipeDirection.Right;
+                    case SwipeDirection.None:
+                        return false;
+                }
+                return false;
+
+            });
+
+            if(enemy == null)
+            {
+                MoveToPosition(position);
+                return true;
+            } else
+            {
+                enemy.Move();
+                Unbind();
+                Hero.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+                Hero.Death();
+                return null;
+            }
+
+            
         }
         return false;
     }
@@ -229,6 +270,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         return CheckEnemies(currentPosition);
     }
 
+    
     bool CheckEnemies(Vector3 position)
     {
         return Enemies.Find(enemy => enemy.Position.x == position.x && enemy.Position.y == position.y) != null;
