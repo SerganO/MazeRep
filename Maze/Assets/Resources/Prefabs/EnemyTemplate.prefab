@@ -127,6 +127,10 @@ MonoBehaviour:
       y: 0
     path: []
   currentPointIndex: 0
+  Position:
+    x: 0
+    y: 0
+  Light: {fileID: 6880016281307529066}
 --- !u!1 &5935110401455115849
 GameObject:
   m_ObjectHideFlags: 0

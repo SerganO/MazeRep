@@ -9,6 +9,8 @@ public class Enemy : Unit
 
     public Position Position;
 
+    public GameObject Light;
+
     public SwipeDirection NextStepDirection()
     {
         if (data.path.Count == 0) return SwipeDirection.None;
@@ -97,5 +99,10 @@ public class Enemy : Unit
     {
         ResetPosition();
         MoveToCurrentPosition();
+    }
+
+    public void SetLightEnabled(bool value)
+    {
+        Light.SetActive(value);
     }
 }

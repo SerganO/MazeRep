@@ -306,9 +306,20 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
                 Hero.Death();
                 break;
         }
+
+        CheckEnemiesLight();
            
     }
 
+    public void CheckEnemiesLight()
+    {
+        foreach(var enemy in Enemies)
+        {
+            var dX = Mathf.Abs(currentPosition.x - enemy.Position.x);
+            var dY = Mathf.Abs(currentPosition.y - enemy.Position.y);
+            enemy.SetLightEnabled((dX + dY) <= 2);
+        }
+    }
     IEnumerator Move(GameObject gameObject, Vector3 position)
     {
         while (Mathf.Abs(gameObject.transform.position.sqrMagnitude - position.sqrMagnitude) > 0.25f)
@@ -325,6 +336,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         Bind();
         Hero.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
         Hero.Idle();
+        CheckEnemiesLight();
     }
 
     public void AfterWinFunction()
@@ -337,6 +349,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
             MoveToStart();
             Bind();
             Hero.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+            CheckEnemiesLight();
         }
     }
 
