@@ -15,7 +15,7 @@ MonoBehaviour:
   enemiesDatas:
   - enemyId: BaseEnemy
     startPoint:
-      x: -2
+      x: -1
       y: 1
     path:
     - x: -2

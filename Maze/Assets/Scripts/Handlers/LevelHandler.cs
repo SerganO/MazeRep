@@ -223,9 +223,13 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         StartCoroutine(Move(transform.gameObject, new Vector3(position.x , position.y, 0)));
     }
 
+    bool TileExist(Vector3Int position)
+    {
+        return _level.GroundTiles.Find(tile => { return tile.Position.x == position.x && tile.Position.y == position.y; }) != null;
+    }
     bool? MoveToPositionIfCan(Vector3Int position, SwipeDirection direction)
     {
-        if(_level.GroundTiles.Find(tile => { return tile.Position.x == position.x && tile.Position.y == position.y; }) != null) {
+        if(TileExist(position)) {
             var enemies = Enemies.FindAll(enemy => enemy.Position.x == position.x && enemy.Position.y == position.y);
 
             var enemy = enemies.Find(enemy =>
@@ -317,7 +321,68 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         {
             var dX = Mathf.Abs(currentPosition.x - enemy.Position.x);
             var dY = Mathf.Abs(currentPosition.y - enemy.Position.y);
-            enemy.SetLightEnabled((dX + dY) <= 2);
+            var distance = dX + dY;
+            switch(distance)
+            {
+                case 0:
+                case 1:
+                    enemy.SetLightEnabled(true);
+                    break;
+                case 2:
+                    if(dX == 0)
+                    {
+                        if(currentPosition.y < enemy.Position.y)
+                        {
+                            enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x, currentPosition.y + 1)));
+                        } else
+                        {
+                            enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x, currentPosition.y - 1)));
+                        }
+                    } else if(dY == 0)
+                    {
+                        if (currentPosition.y < enemy.Position.y)
+                        {
+                            enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x + 1, currentPosition.y)));
+                        }
+                        else
+                        {
+                            enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x - 1, currentPosition.y)));
+                        }
+                    } else
+                    {
+                        if (currentPosition.x < enemy.Position.x)
+                        {
+                            if (currentPosition.y < enemy.Position.y)
+                            {
+                                enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x + 1, currentPosition.y)) ||
+                                    TileExist(new Vector3Int(currentPosition.x, currentPosition.y + 1)));
+                            }
+                            else
+                            {
+                                enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x + 1, currentPosition.y)) ||
+                                     TileExist(new Vector3Int(currentPosition.x, currentPosition.y - 1)));
+                            }
+                        }
+                        else
+                        {
+                            if (currentPosition.y < enemy.Position.y)
+                            {
+                                enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x - 1, currentPosition.y)) ||
+                                    TileExist(new Vector3Int(currentPosition.x, currentPosition.y + 1)));
+                            }
+                            else
+                            {
+                                enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x - 1, currentPosition.y)) ||
+                                   TileExist(new Vector3Int(currentPosition.x, currentPosition.y - 1)));
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    enemy.SetLightEnabled(false);
+                    break;
+            }
+            
         }
     }
     IEnumerator Move(GameObject gameObject, Vector3 position)
