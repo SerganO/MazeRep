@@ -47,9 +47,8 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         currentPosition = startTile;
         foreach(var enemy in Enemies)
         {
-            var pos = new Vector3Int(enemy.data.startPoint.x, enemy.data.startPoint.y);
-            InstantlyMoveToPosition(enemy.gameObject.transform.parent, pos);
-            enemy.currentPointIndex = 0;
+            enemy.MoveToStartPosition();
+            
         }
     }
 
@@ -179,31 +178,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
             currentPosition = position;
             foreach (var enemy in Enemies)
             {
-                var enemyDirection = enemy.NextStepDirection();
-                Debug.Log(enemy.CurrentPos);
-                Debug.Log(enemyDirection);
-                var pos = enemy.CurrentPos;
-                switch (enemyDirection)
-                {
-                    case SwipeDirection.Up:
-                        enemy.UpSwipe();
-                        enemy.gameObject.transform.parent.transform.position = new Vector3((int)pos.x, (int)(pos.y + 1));
-                        break;
-                    case SwipeDirection.Down:
-                        enemy.DownSwipe();
-                        enemy.gameObject.transform.parent.transform.position = new Vector3((int)pos.x, (int)(pos.y - 1));
-                        break;
-                    case SwipeDirection.Right:
-                        enemy.RightSwipe();
-                        enemy.gameObject.transform.parent.transform.position = new Vector3((int)(pos.x + 1), (int)pos.y);
-                        break;
-                    case SwipeDirection.Left:
-                        enemy.LeftSwipe();
-                        enemy.gameObject.transform.parent.transform.position = new Vector3((int)(pos.x - 1), (int)pos.y);
-                        break;
-                    case SwipeDirection.None:
-                        break;
-                }
+                enemy.Move();
 
             }
 
@@ -256,7 +231,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
 
     bool CheckEnemies(Vector3 position)
     {
-        return Enemies.Find(enemy => enemy.CurrentPos.x == position.x && enemy.CurrentPos.y == position.y) != null;
+        return Enemies.Find(enemy => enemy.Position.x == position.x && enemy.Position.y == position.y) != null;
     }
     void CheckMove()
     {
