@@ -9,52 +9,38 @@ public class EnemyManager : MonoBehaviour
 
     private EnemyScriptableObject _lastLoadedEnemy;
     private ResourcesSupplier<EnemyScriptableObject> enemySupplier = new ResourcesSupplier<EnemyScriptableObject>("Enemies");
+    private ResourcesSupplier<GameObject> resourcesSupplier = new ResourcesSupplier<GameObject>("Prefabs");
 
     public Transform EnemiesTransform;
 
-    [SerializeField] private string _levelPack = "Base";
-    [SerializeField] private string _levelId;
-    public List<EnemyData> enemiesDatas = new List<EnemyData>();
-
-    public List<EnemyDevObject> enemiesDevObjects = new List<EnemyDevObject>();
-
-    public EnemyScriptableObject scriptableObject;
-
+    public string levelPack = "Base";
+    public string levelId;
+    private List<EnemyData> enemiesDatas = new List<EnemyData>();
 
     public void ConvertObjectToDatas()
     {
         enemiesDatas = new List<EnemyData>();
-        Debug.Log(enemiesDevObjects.Count);
-        foreach(var enemy in enemiesDevObjects)
+        for (int i = 0; i < EnemiesTransform.childCount; i++)
         {
-            var data = new EnemyData();
-            data.enemyId = enemy.enemyId;
-            var startPointPosition = enemy.startPoint.position;
-            data.startPoint = new Position((int)startPointPosition.x, (int)startPointPosition.y);
+            var enemy = EnemiesTransform.GetChild(i).gameObject.GetComponent<EnemyDevObject>();
 
-            foreach(var point in enemy.pathPoints)
+            if(enemy != null)
             {
-                var pointPosition = point.position;
-                data.path.Add(new Position((int)pointPosition.x, (int)pointPosition.y));
+                var data = new EnemyData();
+                data.enemyId = enemy.enemyId;
+                var startPointPosition = enemy.startPoint.position;
+                data.startPoint = new Position((int)startPointPosition.x, (int)startPointPosition.y);
+
+                foreach (var point in enemy.pathPoints)
+                {
+                    var pointPosition = point.position;
+                    data.path.Add(new Position((int)pointPosition.x, (int)pointPosition.y));
+                }
+
+                enemiesDatas.Add(Helper.DeepClone(data));
             }
-
-            enemiesDatas.Add(Helper.DeepClone(data));
         }
-
-        var newEnemies = ScriptableObject.CreateInstance<EnemyScriptableObject>();
-
-        newEnemies.enemiesDatas = Helper.DeepClone(enemiesDatas);
-        newEnemies.name = $"Level {_levelId}";
-#if UNITY_EDITOR
-        ScriptableEnemyObjectUtility.SaveEnemyFile(newEnemies);
-#endif
         
-    }
-
-    public void ConvertScriptableObjectToDatas()
-    {
-        Debug.Log(scriptableObject.enemiesDatas.Count);
-        enemiesDatas = Helper.DeepClone(scriptableObject.enemiesDatas);
     }
 
     public EnemyScriptableObject LastLoadedEnemy
@@ -65,6 +51,11 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
+    public void ClearMapDev()
+    {
+        EnemiesTransform.DestroyImmediateAllChilds();
+        enemiesDatas = new List<EnemyData>();
+    }
     public void ClearMap()
     {
         EnemiesTransform.DestroyAllChilds();
@@ -72,11 +63,12 @@ public class EnemyManager : MonoBehaviour
     }
     public void SaveMap()
     {
-        SaveMap(_levelId, _levelPack);
+        SaveMap(levelId, levelPack);
     }
 
     public void SaveMap(string levelId)
     {
+        ConvertObjectToDatas();
         var newEnemies = ScriptableObject.CreateInstance<EnemyScriptableObject>();
 
         newEnemies.enemiesDatas = Helper.DeepClone(enemiesDatas);
@@ -88,6 +80,7 @@ public class EnemyManager : MonoBehaviour
 
     public void SaveMap(string levelId, string levelPack)
     {
+        ConvertObjectToDatas();
         var newEnemies = ScriptableObject.CreateInstance<EnemyScriptableObject>();
 
         newEnemies.enemiesDatas = Helper.DeepClone(enemiesDatas);
@@ -100,7 +93,12 @@ public class EnemyManager : MonoBehaviour
 
     public void LoadMap()
     {
-        LoadMap(_levelId, _levelPack);
+        LoadMap(levelId, levelPack);
+    }
+
+    public void LoadDevObjects()
+    {
+        LoadDevObjects(levelId, levelPack);
     }
 
     public void LoadMap(string levelId, string levelPack = "", string levelType = "")
@@ -115,10 +113,33 @@ public class EnemyManager : MonoBehaviour
 
         ClearMap();
 
-
         _lastLoadedEnemy = enemy;
     }
 
+    public void LoadDevObjects(string levelId, string levelPack = "", string levelType = "")
+    {
+        LoadMap(levelId, levelPack, levelType);
+        foreach (var enemyData in _lastLoadedEnemy.enemiesDatas)
+        {
+            var enemyTemplate = resourcesSupplier.GetObjectForID("EnemyDevTemplate");
+            var enemyWorldObject = Instantiate(enemyTemplate, EnemiesTransform);
+
+            enemyWorldObject.transform.position = enemyData.startPoint.Vector3;
+            var devObject = enemyWorldObject.GetComponent<EnemyDevObject>();
+            var startPoint = resourcesSupplier.GetObjectForID("StartPoint");
+            var startPointWorldObject = Instantiate(startPoint, enemyWorldObject.transform);
+            startPointWorldObject.transform.position = enemyData.startPoint.Vector3;
+            devObject.startPoint = startPointWorldObject.transform;
+            devObject.pathPoints = new List<Transform>();
+            foreach (var point in enemyData.path)
+            {
+                var pathPoint = resourcesSupplier.GetObjectForID("Point");
+                var pathPointWorldObject = Instantiate(pathPoint, enemyWorldObject.transform);
+                pathPointWorldObject.transform.position = point.Vector3;
+                devObject.pathPoints.Add(pathPointWorldObject.transform);
+            }
+        }
+    }
 
 }
 

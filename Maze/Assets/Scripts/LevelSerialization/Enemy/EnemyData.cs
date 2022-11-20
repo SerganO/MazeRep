@@ -29,4 +29,20 @@ public class Position
     {
         return $"{x}:{y}";
     }
+
+    public Vector3Int Vector3Int
+    {
+        get
+        {
+            return new Vector3Int(x, y);
+        }
+    }
+
+    public Vector3 Vector3
+    {
+        get
+        {
+            return new Vector3(x, y);
+        }
+    }
 }

@@ -4,14 +4,14 @@ using UnityEditor;
 using UnityEngine;
 
 #if UNITY_EDITOR
-[CustomEditor(typeof(EnemyManager))]
-public class EnemyManagerEditor : Editor
+[CustomEditor(typeof(LevelManager))]
+public class LevelManagerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
 
-        var script = (EnemyManager)target;
+        var script = (LevelManager)target;
 
         if (GUILayout.Button("Save"))
         {

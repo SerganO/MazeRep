@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelManager
+public class LevelPackManager
 {
     private ResourcesSupplier<LevelPackScriptableObject> levelPackSupplier = new ResourcesSupplier<LevelPackScriptableObject>("LevelPacks");
     private Dictionary<string, LevelPackScriptableObject> levelIds = new Dictionary<string, LevelPackScriptableObject>();

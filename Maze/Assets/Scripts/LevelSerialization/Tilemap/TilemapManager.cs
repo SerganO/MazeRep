@@ -10,15 +10,15 @@ using UnityEngine.Tilemaps;
 
 public class TilemapManager : MonoBehaviour {
     [SerializeField] private Tilemap _groundMap, _objectMap, _unitMap;
-    [SerializeField] private string _levelPack = "Base";
-    [SerializeField] private string _levelId;
-
+    
     private ScriptableLevel _lastLoadedLevel;
     private ResourcesSupplier<ScriptableLevel> levelSupplier = new ResourcesSupplier<ScriptableLevel>("Levels");
 
     private ResourcesSupplier<LevelTile> tileSupplier = new ResourcesSupplier<LevelTile>("Tiles");
 
-    public EnemyManager enemyManager;
+    public string levelPack = "Base";
+    public string levelId;
+
     public ScriptableLevel LastLoadedLevel
     {
         get
@@ -27,7 +27,7 @@ public class TilemapManager : MonoBehaviour {
         }
     }
     public void SaveMap() {
-        SaveMap(_levelId, _levelPack);
+        SaveMap(levelId, levelPack);
     }
 
     public void SaveMap(string levelId)
@@ -103,7 +103,7 @@ public class TilemapManager : MonoBehaviour {
 
     public void LoadMap()
     {
-        LoadMap(_levelId, _levelPack);
+        LoadMap(levelId, levelPack);
     }
 
     public void LoadMap(string levelId, string levelPack = "", string levelType = "")

@@ -7,7 +7,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
     private ScriptableLevel _level;
     private EnemyScriptableObject _enemy;
     private MoveResultChecker moveResultChecker = new MoveResultChecker();
-    private LevelManager levelManager = new LevelManager();
+    private LevelPackManager levelManager = new LevelPackManager();
     [HideInInspector]
     public Vector3Int currentPosition;
     [Header("Managers")]

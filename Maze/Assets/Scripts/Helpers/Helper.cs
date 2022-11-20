@@ -69,4 +69,38 @@ public static class TransformHelper
             Object.Destroy(child.gameObject);
         }
     }
+
+    public static void DestroyImmediateAllChilds(this Transform transform)
+    {
+        int childCount = transform.childCount;
+        for(int i =0;i<childCount;i++)
+        {
+            var child = transform.GetChild(0);
+            Object.DestroyImmediate(child.gameObject);
+        }
+    }
 }
+
+public static class Vector3Helper {
+    public static Vector3 MovedByX(this Vector3 vector, float offset)
+    {
+        return new Vector3(vector.x + offset, vector.y, vector.z);
+    }
+
+    public static Vector3 MovedByY(this Vector3 vector, float offset)
+    {
+        return new Vector3(vector.x, vector.y + offset, vector.z);
+    }
+
+    public static Vector3 MovedByZ(this Vector3 vector, float offset)
+    {
+        return new Vector3(vector.x, vector.y, vector.z + offset);
+    }
+
+    public static Vector3 MovedByXYZ(this Vector3 vector, float offsetX = 0, float offsetY = 0, float offsetZ = 0)
+    {
+        return new Vector3(vector.x + offsetX, vector.y + offsetY, vector.z + offsetZ);
+    }
+
+}
+
