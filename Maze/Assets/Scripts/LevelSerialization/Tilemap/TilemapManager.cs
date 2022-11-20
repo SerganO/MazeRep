@@ -40,7 +40,6 @@ public class TilemapManager : MonoBehaviour {
         newLevel.GroundTiles = GetTilesFromMap(_groundMap).ToList();
         newLevel.ObjectTiles = GetTilesFromMap(_objectMap).ToList();
         newLevel.UnitTiles = GetTilesFromMap(_unitMap).ToList();
-
         #if UNITY_EDITOR
         ScriptableObjectUtility.SaveLevelFile(newLevel);
         #endif

@@ -8,8 +8,8 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
     private EnemyScriptableObject _enemy;
     private MoveResultChecker moveResultChecker = new MoveResultChecker();
     private LevelManager levelManager = new LevelManager();
-
-    private Vector3Int currentPosition;
+    [HideInInspector]
+    public Vector3Int currentPosition;
     [Header("Managers")]
     public TilemapManager TilemapManager;
     public EnemyManager EnemyManager;
@@ -50,6 +50,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
             enemy.MoveToStartPosition();
             
         }
+        Hero.CheckShadow();
     }
 
     // Update is called once per frame
@@ -312,7 +313,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         }
 
         CheckEnemiesLight();
-           
+        Hero.CheckShadow();
     }
 
     public void CheckEnemiesLight()
@@ -329,54 +330,7 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
                     enemy.SetLightEnabled(true);
                     break;
                 case 2:
-                    if(dX == 0)
-                    {
-                        if(currentPosition.y < enemy.Position.y)
-                        {
-                            enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x, currentPosition.y + 1)));
-                        } else
-                        {
-                            enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x, currentPosition.y - 1)));
-                        }
-                    } else if(dY == 0)
-                    {
-                        if (currentPosition.y < enemy.Position.y)
-                        {
-                            enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x + 1, currentPosition.y)));
-                        }
-                        else
-                        {
-                            enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x - 1, currentPosition.y)));
-                        }
-                    } else
-                    {
-                        if (currentPosition.x < enemy.Position.x)
-                        {
-                            if (currentPosition.y < enemy.Position.y)
-                            {
-                                enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x + 1, currentPosition.y)) ||
-                                    TileExist(new Vector3Int(currentPosition.x, currentPosition.y + 1)));
-                            }
-                            else
-                            {
-                                enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x + 1, currentPosition.y)) ||
-                                     TileExist(new Vector3Int(currentPosition.x, currentPosition.y - 1)));
-                            }
-                        }
-                        else
-                        {
-                            if (currentPosition.y < enemy.Position.y)
-                            {
-                                enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x - 1, currentPosition.y)) ||
-                                    TileExist(new Vector3Int(currentPosition.x, currentPosition.y + 1)));
-                            }
-                            else
-                            {
-                                enemy.SetLightEnabled(TileExist(new Vector3Int(currentPosition.x - 1, currentPosition.y)) ||
-                                   TileExist(new Vector3Int(currentPosition.x, currentPosition.y - 1)));
-                            }
-                        }
-                    }
+                    enemy.SetLightEnabled(CanSeeSecondRadiusObject(currentPosition, new Vector3Int(enemy.Position.x, enemy.Position.y), dX, dY));
                     break;
                 default:
                     enemy.SetLightEnabled(false);
@@ -385,6 +339,62 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
             
         }
     }
+
+    public bool CanSeeSecondRadiusObject(Vector3Int pos1, Vector3Int pos2, int dX, int dY)
+    {
+        if (dX == 0)
+        {
+            if (pos1.y < pos2.y)
+            {
+                return TileExist(new Vector3Int(pos1.x, pos1.y + 1));
+            }
+            else
+            {
+                return TileExist(new Vector3Int(pos1.x, pos1.y - 1));
+            }
+        }
+        else if (dY == 0)
+        {
+            if (pos1.x < pos2.x)
+            {
+                return TileExist(new Vector3Int(pos1.x + 1, pos1.y));
+            }
+            else
+            {
+                return TileExist(new Vector3Int(pos1.x - 1, pos1.y));
+            }
+        }
+        else
+        {
+            if (pos1.x < pos2.x)
+            {
+                if (pos1.y < pos2.y)
+                {
+                    return TileExist(new Vector3Int(pos1.x + 1, pos1.y)) ||
+                        TileExist(new Vector3Int(pos1.x, pos1.y + 1));
+                }
+                else
+                {
+                    return TileExist(new Vector3Int(pos1.x + 1, pos1.y)) ||
+                         TileExist(new Vector3Int(pos1.x, pos1.y - 1));
+                }
+            }
+            else
+            {
+                if (pos1.y < pos2.y)
+                {
+                    return TileExist(new Vector3Int(currentPosition.x - 1, currentPosition.y)) ||
+                        TileExist(new Vector3Int(currentPosition.x, currentPosition.y + 1));
+                }
+                else
+                {
+                    return TileExist(new Vector3Int(currentPosition.x - 1, currentPosition.y)) ||
+                       TileExist(new Vector3Int(currentPosition.x, currentPosition.y - 1));
+                }
+            }
+        }
+    }
+
     IEnumerator Move(GameObject gameObject, Vector3 position)
     {
         while (Mathf.Abs(gameObject.transform.position.sqrMagnitude - position.sqrMagnitude) > 0.25f)
