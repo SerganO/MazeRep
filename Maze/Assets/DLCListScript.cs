@@ -10,13 +10,42 @@ public class DLCListScript : MonoBehaviour
     public RectTransform Content;
     public int lastIndex = 0;
 
+    private List<LevelPackData> levelPackDatas = new List<LevelPackData>();
+    public List<LevelPackItem> levelPackItems = new List<LevelPackItem>();
+
     private void Start()
     {
         ScrollRect = GetComponent<ScrollRect>();
         Bind();
-        var child = Content.GetChild(lastIndex).GetChild(0);
+        LoadList();
+        SetSelection(0);
+    }
 
-        child.GetComponent<RectTransform>().sizeDelta = new Vector2(200, 200);
+    void LoadList()
+    {
+        levelPackItems = new List<LevelPackItem>();
+        Content.DestroyAllChilds();
+        levelPackDatas = LevelPackManager.sharedInstance.levelPackDatas;
+        var levelPackItemTemplate = ResourcesSupplier<LevelPackItem>.PrefabsSupplier.GetObjectForID("LevelPackItem");
+        foreach(var data in levelPackDatas)
+        {
+            var levelPackItemObject = Instantiate(levelPackItemTemplate, Content);
+            var levelPackItem = levelPackItemObject.GetComponent<LevelPackItem>();
+            levelPackItem.SetupForData(data);
+            levelPackItems.Add(levelPackItem);
+        }
+
+
+    }
+
+    public void SetSelection(int index)
+    {
+        for (int i = 0; i < levelPackItems.Count; i++)
+        {
+            var item = levelPackItems[i];
+
+           item.SetSize(i == index ? 200 : 150);
+        }
     }
     public void Bind()
     {
@@ -30,12 +59,7 @@ public class DLCListScript : MonoBehaviour
             Debug.Log(lastIndex);
             var elementOffset = 1.0f / (Content.childCount - 1);
             ScrollRect.horizontalNormalizedPosition = elementOffset * lastIndex + 0.0001f;
-            for (int i = 0; i < Content.childCount; i++)
-            {
-                var child = Content.GetChild(i).GetChild(0);
-
-                child.GetComponent<RectTransform>().sizeDelta = i == lastIndex ? new Vector2(200, 200) : new Vector2(150, 150);
-            }
+            SetSelection(lastIndex);
         }
     }
 
@@ -50,12 +74,7 @@ public class DLCListScript : MonoBehaviour
         if (index != lastIndex)
         {
             lastIndex = index;
-            for (int i = 0; i < Content.childCount; i++)
-            {
-                var child = Content.GetChild(i).GetChild(0);
-
-                child.GetComponent<RectTransform>().sizeDelta = i == index ? new Vector2(200, 200) : new Vector2(150, 150);
-            }
+            SetSelection(lastIndex);
         }
 
 

@@ -95,13 +95,11 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
         _level = TilemapManager.LastLoadedLevel;
         _enemy = EnemyManager.LastLoadedEnemy;
 
-        var enemySupplier = new ResourcesSupplier<GameObject>("Prefabs");
-        var spriteSupplier = new ResourcesSpriteSupplier();
         EnemyParentObject.DestroyAllChilds();
         Enemies = new List<Enemy>();
         foreach (var enemyData in _enemy.enemiesDatas)
         {
-            var enemyTemplate = enemySupplier.GetObjectForID("EnemyTemplate");
+            var enemyTemplate = ResourcesSupplier<Enemy>.PrefabsSupplier.GetObjectForID("EnemyTemplate");
             var enemyWorldObject = Instantiate(enemyTemplate, EnemyParentObject);
             var enemy = enemyWorldObject.transform.GetChild(0).GetComponent<Enemy>();
             Enemies.Add(enemy);

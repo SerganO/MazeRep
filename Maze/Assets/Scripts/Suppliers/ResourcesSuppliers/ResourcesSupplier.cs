@@ -3,6 +3,9 @@ using System.Linq;
 
 public class ResourcesSupplier<T> : ISupplier<T> where T : UnityEngine.Object
 {
+    public static ResourcesSupplier<Sprite> SpriteSupplier = new ResourcesSupplier<Sprite>("Sprites");
+    public static ResourcesSupplier<AudioClip> AudioSupplier = new ResourcesSupplier<AudioClip>("Audios");
+    public static ResourcesSupplier<GameObject> PrefabsSupplier = new ResourcesSupplier<GameObject>("Prefabs");
     private string baseFolder;
 
     public ResourcesSupplier(string baseFolder)
