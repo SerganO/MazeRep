@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   packName: Tutorial
   Type: 0
-  levelsCount: 4
+  levelsCount: 7
   levelIds:
   - 1
   - 2

@@ -6,6 +6,10 @@ using UnityEngine;
 
 
 public delegate void VoidFunc();
+public delegate void IntFunc(int value);
+public delegate void FloatFunc(float value);
+public delegate void LevelPackDataFunc(LevelPackData value);
+public delegate void StringFunc(string value);
 
 public static class Helper
 {

@@ -29,4 +29,17 @@ public class MakeScriptableObject
 
         Selection.activeObject = asset;
     }
+
+    [MenuItem("Assets/Create/Context")]
+    public static void CreateContextScriptableObject()
+    {
+        ContextScriptableObject asset = ScriptableObject.CreateInstance<ContextScriptableObject>();
+
+        AssetDatabase.CreateAsset(asset, $"Assets/Resources/Context/NewContext {System.DateTime.Now.ToString().Replace(':', '_')}.asset");
+        AssetDatabase.SaveAssets();
+
+        EditorUtility.FocusProjectWindow();
+
+        Selection.activeObject = asset;
+    }
 }

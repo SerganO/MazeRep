@@ -7,11 +7,15 @@ using UnityEngine.UI;
 public class DLCListScript : MonoBehaviour
 {
     ScrollRect ScrollRect;
+    private List<LevelPackData> levelPackDatas = new List<LevelPackData>();
+
     public RectTransform Content;
     public int lastIndex = 0;
 
-    private List<LevelPackData> levelPackDatas = new List<LevelPackData>();
+   
     public List<LevelPackItem> levelPackItems = new List<LevelPackItem>();
+
+    public event LevelPackDataFunc SelectedIndexChanged;
 
     private void Start()
     {
@@ -46,6 +50,7 @@ public class DLCListScript : MonoBehaviour
 
            item.SetSize(i == index ? 200 : 150);
         }
+        SelectedIndexChanged?.Invoke(levelPackDatas[index]);
     }
     public void Bind()
     {

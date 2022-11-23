@@ -2,14 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelHandler : MonoBehaviour, ISwipeHandler
+public class LevelHandler : BaseHandler, ISwipeHandler
 {
     private ScriptableLevel _level;
     private EnemyScriptableObject _enemy;
     private MoveResultChecker moveResultChecker = new MoveResultChecker();
     private LevelPackManager levelManager = new LevelPackManager();
+
+    
     [HideInInspector]
     public Vector3Int currentPosition;
+
+    public bool IsDebug = false;
+
     [Header("Managers")]
     public TilemapManager TilemapManager;
     public EnemyManager EnemyManager;
@@ -34,6 +39,13 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
     void Start()
     {
         Hero.levelHandler = this;
+        if(!IsDebug)
+        {
+            var context = GetCurrentContext();
+            levelId = context.levelId;
+            levelPack = context.packId;
+            levelType = context.levelType;
+        }
         LoadLevel(levelId, levelPack, levelType);
 
         MoveToStart();
@@ -423,6 +435,9 @@ public class LevelHandler : MonoBehaviour, ISwipeHandler
             Bind();
             Hero.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
             CheckEnemiesLight();
+        } else
+        {
+            SceneLoader.instance.LoadPrev();
         }
     }
 
