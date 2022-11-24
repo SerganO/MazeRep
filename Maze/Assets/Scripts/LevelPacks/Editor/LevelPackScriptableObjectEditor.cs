@@ -1,45 +1,23 @@
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEditor;
 
-public class MakeScriptableObject
+#if UNITY_EDITOR
+[CustomEditor(typeof(LevelPackScriptableObject))]
+public class LevelPackScriptableObjectEditor : Editor
 {
-    [MenuItem("Assets/Create/LevelPack")]
-    public static void CreateLevelPackScriptableObject()
+    public override void OnInspectorGUI()
     {
-        LevelPackScriptableObject asset = ScriptableObject.CreateInstance<LevelPackScriptableObject>();
+        DrawDefaultInspector();
 
-        AssetDatabase.CreateAsset(asset, $"Assets/Resources/LevelPacks/NewLevelPack {System.DateTime.Now.ToString().Replace(':', '_')}.asset");
-        AssetDatabase.SaveAssets();
+        var script = (LevelPackScriptableObject)target;
 
-        EditorUtility.FocusProjectWindow();
-
-        Selection.activeObject = asset;
-    }
-
-    [MenuItem("Assets/Create/Enemy")]
-    public static void CreateEnemyScriptableObject()
-    {
-        EnemyScriptableObject asset = ScriptableObject.CreateInstance<EnemyScriptableObject>();
-
-        AssetDatabase.CreateAsset(asset, $"Assets/Resources/Enemies/NewEnemy {System.DateTime.Now.ToString().Replace(':', '_')}.asset");
-        AssetDatabase.SaveAssets();
-
-        EditorUtility.FocusProjectWindow();
-
-        Selection.activeObject = asset;
-    }
-
-    [MenuItem("Assets/Create/Context")]
-    public static void CreateContextScriptableObject()
-    {
-        ContextScriptableObject asset = ScriptableObject.CreateInstance<ContextScriptableObject>();
-
-        AssetDatabase.CreateAsset(asset, $"Assets/Resources/Context/NewContext {System.DateTime.Now.ToString().Replace(':', '_')}.asset");
-        AssetDatabase.SaveAssets();
-
-        EditorUtility.FocusProjectWindow();
-
-        Selection.activeObject = asset;
+        if (GUILayout.Button("Convert To Progress File"))
+        {
+            script.ConvertToProgressFile();
+        }
     }
 }
+#endif
+

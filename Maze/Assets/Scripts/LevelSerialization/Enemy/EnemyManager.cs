@@ -74,7 +74,7 @@ public class EnemyManager : MonoBehaviour
         newEnemies.enemiesDatas = Helper.DeepClone(enemiesDatas);
         newEnemies.name = $"Level {levelId}";
 #if UNITY_EDITOR
-        ScriptableEnemyObjectUtility.SaveEnemyFile(newEnemies);
+        ScriptableObjectUtility.SaveEnemyFile(newEnemies);
 #endif
     }
 
@@ -86,7 +86,7 @@ public class EnemyManager : MonoBehaviour
         newEnemies.enemiesDatas = Helper.DeepClone(enemiesDatas);
         newEnemies.name = $"Level {levelId}";
 #if UNITY_EDITOR
-        ScriptableEnemyObjectUtility.SaveEnemyFile(newEnemies, levelPack);
+        ScriptableObjectUtility.SaveEnemyFile(newEnemies, levelPack);
 #endif
     }
 
@@ -142,30 +142,3 @@ public class EnemyManager : MonoBehaviour
     }
 
 }
-
-#if UNITY_EDITOR
-
-public static class ScriptableEnemyObjectUtility
-{
-    public static void SaveEnemyFile(EnemyScriptableObject enemy)
-    {
-        AssetDatabase.CreateAsset(enemy, $"Assets/Resources/Enemies/_{enemy.name}.asset");
-
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-    }
-
-    public static void SaveEnemyFile(EnemyScriptableObject enemy, string packName)
-    {
-        if (!Directory.Exists($"Assets/Resources/Enemies/{packName}"))
-        {
-            Directory.CreateDirectory($"Assets/Resources/Enemies/{packName}");
-        }
-        AssetDatabase.CreateAsset(enemy, $"Assets/Resources/Enemies/{packName}/{enemy.name}.asset");
-
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-    }
-}
-
-#endif

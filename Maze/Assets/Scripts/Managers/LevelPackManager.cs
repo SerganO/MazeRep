@@ -108,6 +108,7 @@ public class LevelPackManager
     }
 }
 
+[System.Serializable]
 public class LevelPackData {
     public string packName;
     public string packId;

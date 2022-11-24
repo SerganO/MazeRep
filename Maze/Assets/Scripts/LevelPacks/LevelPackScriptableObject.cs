@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class LevelPackScriptableObject : ScriptableObject
 {
-    public string packName;
+    public LevelPackData packData;
 
     public LevelPackType Type = LevelPackType.Ordinary;
     [Header("For Ordinary")]
@@ -31,6 +31,17 @@ public class LevelPackScriptableObject : ScriptableObject
         }
 
         return new List<string>();
+    }
+
+    public void ConvertToProgressFile()
+    {
+        var newLevelProgress = ScriptableObject.CreateInstance<LevelPackProgressFile>();
+        newLevelProgress.packData = Helper.DeepClone(packData);
+        GetLevelIds().ForEach(id => {
+            newLevelProgress.LevelDatas.Add(new LevelData { available = false, levelId = id, levelName = id, reachedStars = 0 });
+        });
+        newLevelProgress.name = packData.packId;
+        ScriptableObjectUtility.SaveLevelProgressFile(newLevelProgress);
     }
 }
 

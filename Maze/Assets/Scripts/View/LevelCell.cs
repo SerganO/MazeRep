@@ -58,6 +58,7 @@ public class LevelCell : MonoBehaviour, IPointerDownHandler
     }
 }
 
+[System.Serializable]
 public class LevelData {
     public string levelId;
     public string levelName;

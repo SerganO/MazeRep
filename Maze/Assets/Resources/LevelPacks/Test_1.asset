@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 718eaad4f56e2d042900f3d031082191, type: 3}
   m_Name: Test_1
   m_EditorClassIdentifier: 
-  packName: Tutorial
+  packData:
+    packName: Test 1
+    packId: Test_1
+    available: 0
   Type: 0
   levelsCount: 6
   levelIds:
