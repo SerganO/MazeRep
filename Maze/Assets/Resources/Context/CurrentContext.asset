@@ -15,3 +15,4 @@ MonoBehaviour:
   packId: Tutorial
   levelId: 1
   levelType: Base
+  levelPacksFilename: VisibleLevelPacks

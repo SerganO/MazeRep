@@ -40,6 +40,7 @@ public class LevelPackScriptableObject : ScriptableObject
         GetLevelIds().ForEach(id => {
             newLevelProgress.LevelDatas.Add(new LevelData { available = false, levelId = id, levelName = id, reachedStars = 0 });
         });
+        newLevelProgress.MakeFirstAvailable();
         newLevelProgress.name = packData.packId;
         ScriptableObjectUtility.SaveLevelProgressFile(newLevelProgress);
     }

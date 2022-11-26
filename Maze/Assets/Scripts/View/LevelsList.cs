@@ -9,25 +9,25 @@ public class LevelsList : MonoBehaviour
     public GameObject Lock;
 
     public event StringFunc CellTapped;
-    public void SetupForData(bool packAvaiable, List<LevelData> data, int cellsInRow = 4)
+    public void SetupForData(LevelPackProgressFile packProgressFile, int cellsInRow = 4)
     {
         Content.DestroyAllChilds();
-        if(packAvaiable)
+        if(packProgressFile.packData.available)
         {
-            var rowsCount = data.Count / cellsInRow;
-            if (data.Count % cellsInRow != 0) rowsCount++;
+            var rowsCount = packProgressFile.LevelDatas.Count / cellsInRow;
+            if (packProgressFile.LevelDatas.Count % cellsInRow != 0) rowsCount++;
 
             var rowTempate = ResourcesSupplier<GameObject>.PrefabsSupplier.GetObjectForID("LevelRow");
             for (int i = 0; i < rowsCount; i++)
             {
                 var rowObject = Instantiate(rowTempate, Content);
                 var row = rowObject.GetComponent<LevelRow>();
-                row.SetupRowForData(data, i, cellsInRow);
+                row.SetupRowForData(packProgressFile.LevelDatas, i, cellsInRow);
                 row.GetComponent<HorizontalLayoutGroup>().reverseArrangement = (i + 1) % 2 == 0;
                 row.CellTapped += Row_CellTapped;
             }
         }
-        Lock.SetActive(!packAvaiable);
+        Lock.SetActive(!packProgressFile.packData.available);
 
     }
 

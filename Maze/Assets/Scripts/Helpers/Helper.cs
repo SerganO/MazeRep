@@ -13,6 +13,12 @@ public delegate void StringFunc(string value);
 
 public static class Helper
 {
+    public static ResourcesSupplier<ContextScriptableObject> ContextSupplier = new ResourcesSupplier<ContextScriptableObject>("Context");
+
+    public static ContextScriptableObject GetCurrentContext()
+    {
+        return ContextSupplier.GetObjectForID("CurrentContext");
+    }
     public static T DeepClone<T>(T obj)
     {
         using (var ms = new MemoryStream())

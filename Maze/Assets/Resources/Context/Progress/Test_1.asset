@@ -19,7 +19,7 @@ MonoBehaviour:
   LevelDatas:
   - levelId: 1
     levelName: 1
-    available: 0
+    available: 1
     reachedStars: 0
   - levelId: 2
     levelName: 2

@@ -429,6 +429,7 @@ public class LevelHandler : BaseHandler, ISwipeHandler
         if (!levelManager.IsLastLevelInPack(levelId, levelPack))
         {
             var newLevelId = levelManager.NextLevelId(levelId, levelPack);
+
             LoadLevel(newLevelId, levelPack, levelType);
             levelId = newLevelId;
             MoveToStart();

@@ -25,9 +25,10 @@ public class LevelsScreenHandler : BaseHandler
 
     private void DLCList_SelectedIndexChanged(LevelPackData value)
     {
-        var data = LevelPackManager.sharedInstance.levelsData[value.packId];
-        LevelsList.SetupForData(value.available, data);
+        var data = LevelPackManager.sharedInstance.LevelPackProgressFile(value.packId);
+        LevelsList.SetupForData(data);
         SelectedPack = value;
+        GetCurrentContext().packId = SelectedPack.packId;
     }
 
     private void OnDestroy()

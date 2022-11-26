@@ -29,7 +29,7 @@ public class DLCListScript : MonoBehaviour
     {
         levelPackItems = new List<LevelPackItem>();
         Content.DestroyAllChilds();
-        levelPackDatas = LevelPackManager.sharedInstance.levelPackDatas;
+        levelPackDatas = LevelPackManager.sharedInstance.GetCurrentLevelPacksObject().LevelPacks;
         var levelPackItemTemplate = ResourcesSupplier<LevelPackItem>.PrefabsSupplier.GetObjectForID("LevelPackItem");
         foreach(var data in levelPackDatas)
         {
@@ -44,13 +44,14 @@ public class DLCListScript : MonoBehaviour
 
     public void SetSelection(int index)
     {
+        var actualIndex = Mathf.Max(0, Mathf.Min(index, (levelPackDatas.Count - 1)));
         for (int i = 0; i < levelPackItems.Count; i++)
         {
             var item = levelPackItems[i];
 
-           item.SetSize(i == index ? 200 : 150);
+           item.SetSize(i == actualIndex ? 200 : 150);
         }
-        SelectedIndexChanged?.Invoke(levelPackDatas[index]);
+        SelectedIndexChanged?.Invoke(levelPackDatas[actualIndex]);
     }
     public void Bind()
     {
@@ -61,7 +62,6 @@ public class DLCListScript : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
-            Debug.Log(lastIndex);
             var elementOffset = 1.0f / (Content.childCount - 1);
             ScrollRect.horizontalNormalizedPosition = elementOffset * lastIndex + 0.0001f;
             SetSelection(lastIndex);
@@ -71,7 +71,6 @@ public class DLCListScript : MonoBehaviour
 
     public void ChangeSelected(Vector2 value)
     {
-        Debug.Log(value);
         var elementOffset = 1.0f / (Content.childCount - 1);
 
         int index = (int)(value.x / elementOffset);

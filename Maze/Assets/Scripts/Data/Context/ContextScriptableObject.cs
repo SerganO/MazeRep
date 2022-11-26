@@ -8,4 +8,6 @@ public class ContextScriptableObject : ScriptableObject
     public string packId;
     public string levelId;
     public string levelType;
+
+    public string levelPacksFilename;
 }

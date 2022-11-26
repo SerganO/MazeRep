@@ -9,13 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9f0080f2bc85ed4dae8adf1fd3f9230, type: 3}
-  m_Name: VisibleLevelPacks
+  m_Script: {fileID: 11500000, guid: 97cf098dd32fd1e49b7b10b875cbb329, type: 3}
+  m_Name: ReserveCopy
   m_EditorClassIdentifier: 
-  LevelPacks:
-  - packName: Tutorial
-    packId: Tutorial
-    available: 1
-  - packName: Test 1
-    packId: Test_1
-    available: 0
+  packId: Tutorial
+  levelId: 1
+  levelType: Base
+  levelPacksFilename: VisibleLevelPacks
