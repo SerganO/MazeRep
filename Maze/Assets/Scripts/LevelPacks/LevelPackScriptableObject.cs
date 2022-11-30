@@ -33,6 +33,7 @@ public class LevelPackScriptableObject : ScriptableObject
         return new List<string>();
     }
 
+#if UNITY_EDITOR
     public void ConvertToProgressFile()
     {
         var newLevelProgress = ScriptableObject.CreateInstance<LevelPackProgressFile>();
@@ -44,6 +45,7 @@ public class LevelPackScriptableObject : ScriptableObject
         newLevelProgress.name = packData.packId;
         ScriptableObjectUtility.SaveLevelProgressFile(newLevelProgress);
     }
+#endif
 }
 
 public enum LevelPackType {
